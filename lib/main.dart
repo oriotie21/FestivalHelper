@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 import 'QrPage.dart';
 import 'login.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -106,6 +107,25 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: SizedBox(
+                width: 70,
+                height: 60,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                        EdgeInsets.symmetric(vertical: 20.0)),
+                    backgroundColor: MaterialStateProperty.all(Color(0xff447def)),
+                  ),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(),),),
+                  child: Text(
+                    '로그인',
+                    style: TextStyle(fontSize: 15.0, color: Colors.white),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),

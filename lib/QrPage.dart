@@ -9,6 +9,8 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'MainWidget.dart';
+
 bool _wrongEmail = false;
 bool _wrongPassword = false;
 
@@ -82,25 +84,7 @@ class _TimerDisplay extends State<TimerDisplay> {
   }
 }
 
-class LargeTitle extends StatelessWidget {
-  String title = "";
 
-  LargeTitle(String s) {
-    title = s;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    return Padding(
-      padding: EdgeInsets.only(top: 0, bottom: 40, left: 20, right: 20),
-      child: Text(
-        title,
-        style: TextStyle(fontSize: 50.0),
-      ),
-    );
-  }
-}
 
 /*
 - 허용할 기기는 여러대지만 정해져 있다.

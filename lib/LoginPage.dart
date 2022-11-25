@@ -1,10 +1,14 @@
 import 'dart:convert';
 
 import 'package:enterancemanager/QrPage.dart';
+import 'package:enterancemanager/UserManager.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'ServerInfo.dart';
 
 bool _wrongEmail = false;
 bool _wrongPassword = false;
@@ -26,10 +30,12 @@ class _LoginPageState extends State<LoginPage> {
   String emailText = 'Email doesn\'t match';
   String passwordText = 'Password doesn\'t match';
   void processLogin() async{
-      http.Response response = await http.get(Uri.parse("http://192.168.5.130:8000/otp/key?name="+userID));
+      UserCredential user = UserCredential();
+    http.Response response = await http.get(Uri.parse(ServerInfo.addr+"/otp/key?name="+userID));
       Map<String, dynamic> jsonData = jsonDecode(response.body);
       final prefs = await SharedPreferences.getInstance();
       prefs.setString('otpkey', jsonData["key"]);
+      user.setUsername(userID);
       Navigator.push(context, MaterialPageRoute(builder: (context) => QrPage(),),);
   }
   @override

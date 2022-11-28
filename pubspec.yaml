@@ -43,7 +43,22 @@ dependencies:
   qr_flutter: ^4.0.0
   shared_preferences:
   qr_code_scanner:
+  flutter_custom_theme: ^0.2.1
 
+
+  auto_size_text: 3.0.0
+  cached_network_image: 3.2.1
+  flutter_animate: 1.0.0
+  flutter_cache_manager: 3.3.0
+  font_awesome_flutter: 10.1.0
+  from_css_color: 2.0.0
+  google_fonts: 3.0.1
+  intl: 0.17.0
+  json_path: 0.4.1
+  page_transition: 2.0.4
+  sqflite: 2.2.0+2
+  timeago: 3.2.2
+  url_launcher: 6.1.5
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -68,7 +83,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/images/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

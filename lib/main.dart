@@ -1,3 +1,4 @@
+import 'package:enterancemanager/flowtest.dart';
 import 'package:flutter/material.dart';
 
 import 'LoginPage.dart';
@@ -119,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         EdgeInsets.symmetric(vertical: 20.0)),
                     backgroundColor: MaterialStateProperty.all(Color(0xff447def)),
                   ),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage(),),),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQRWidget(),),),
                   child: Text(
                     '로그인',
                     style: TextStyle(fontSize: 15.0, color: Colors.white),
@@ -131,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => QrReaderPage()),),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQRWidget()),),
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.

@@ -180,6 +180,7 @@ class _QrGeneratorForm extends State<QrGeneratorForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    /*
                     SizedBox(
                       width: 100,
                       height: 60,
@@ -215,6 +216,8 @@ class _QrGeneratorForm extends State<QrGeneratorForm> {
                         ),
                       ),
                     ),
+
+                     */
                   ],
                 )
             ,

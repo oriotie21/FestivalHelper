@@ -6,13 +6,14 @@ class FlutterFlowIconButton extends StatelessWidget {
   int? borderWidth;
   int? buttonSize;
   Icon? icon;
-
+  void Function()? onPressed;
   FlutterFlowIconButton({
     this.borderColor,
     this.borderRadius,
     this.borderWidth,
     this.icon,
-    this.buttonSize, required Map Function() onPressed,
+    this.buttonSize,
+    required void Function()? this.onPressed,
   });
 
   @override
@@ -20,8 +21,9 @@ class FlutterFlowIconButton extends StatelessWidget {
     return FloatingActionButton(
       elevation: 0,
       backgroundColor: borderColor,
-      onPressed: () {},
+      onPressed: onPressed,
       child: icon,
+
     );
     throw UnimplementedError();
   }

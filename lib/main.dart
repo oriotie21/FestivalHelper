@@ -1,4 +1,4 @@
-import 'package:enterancemanager/flowtest.dart';
+import 'package:enterancemanager/myqrcode.dart';
 import 'package:flutter/material.dart';
 
 import 'LoginPage.dart';
@@ -120,7 +120,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         EdgeInsets.symmetric(vertical: 20.0)),
                     backgroundColor: MaterialStateProperty.all(Color(0xff447def)),
                   ),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQRWidget(),),),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginWidget(),),),
                   child: Text(
                     '로그인',
                     style: TextStyle(fontSize: 15.0, color: Colors.white),

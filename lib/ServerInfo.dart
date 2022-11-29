@@ -1,3 +1,3 @@
 class ServerInfo{
-  static String addr = "http://192.168.61.218:8000";
+  static String addr = "http://192.168.5.130:8000";
 }

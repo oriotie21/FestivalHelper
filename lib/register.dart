@@ -286,7 +286,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                           child: TextFormField(
                             controller: studentNameController,
-                            obscureText: false,
+                            obscureText: true,
                             decoration: InputDecoration(
                               hintText: '학사정보시스템 ID',
                               enabledBorder: OutlineInputBorder(
@@ -336,7 +336,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
                           child: TextFormField(
                             controller: studentPasswordController,
-                            obscureText: false,
+                            obscureText: true,
                             decoration: InputDecoration(
                               hintText: '학사정보 시스템 비밀번호',
                               enabledBorder: OutlineInputBorder(
@@ -379,7 +379,7 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                   fontFamily: 'Outfit',
                                   color: FlutterFlowTheme.of(context).lineColor,
                                 ),
-                            keyboardType: TextInputType.emailAddress,
+                            keyboardType: TextInputType.visiblePassword,
                           ),
                         ),
                         Row(
@@ -420,17 +420,6 @@ class _RegisterWidgetState extends State<RegisterWidget> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                         content: Text("기본 정보를 모두 입력해주세요")));
-                                return;
-                              }
-                              if (passwordTextController?.text !=
-                                  confirmPasswordTextController?.text) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(
-                                      'Passwords don\'t match!',
-                                    ),
-                                  ),
-                                );
                                 return;
                               }
                               HttpRequest req = HttpRequest();

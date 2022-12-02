@@ -59,10 +59,6 @@ class _ExampleQrView extends State<ExampleQrView> {
           onPermissionSet: (ctrl, p) => _onPermissionSet(context, ctrl, p),
         ),
       ),
-      if(result != null)
-        Text(msg.toString())
-      else
-        Text("NULL")
     ]);
   }
 

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:enterancemanager/UserManager.dart';
 import 'package:enterancemanager/httprequest.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
 import '../flutter_flow/flutter_flow_theme.dart';
@@ -51,6 +52,7 @@ class _StampBoardWidgetState extends State<StampBoardWidget>
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<Map> completedStamps = <Map>[];
   List<Map> waitingStamps = <Map>[];
+  List stampList = [];
 
   @override
   void initState() {
@@ -82,10 +84,13 @@ class _StampBoardWidgetState extends State<StampBoardWidget>
   Future<void> loadStamps() async {
     HttpRequest request = HttpRequest();
     UserCredential credential = UserCredential();
+    String? username = await credential.getUsername();
+    http.Response r = await request.sendGetRequest("/api/visits/user/"+username!, null);
+    stampList = jsonDecode(r.body); //json list
 
-    http.Response r = await request.sendGetRequest("/visits/user/" + (await credential.getUsername())!, null);
+/*
     Map<String, dynamic> resp = jsonDecode(r.body);
-    List<Map<String, dynamic>> stampList =
+    //List<Map<String, dynamic>> stampList =
         new List<Map<String, dynamic>>.from(resp["response"]);
     stampList.forEach((element) {
       if (element["end_time"] == null) {
@@ -94,7 +99,7 @@ class _StampBoardWidgetState extends State<StampBoardWidget>
         completedStamps.add(element);
       }
       Logger().v(waitingStamps.length);
-    });
+    });*/
   }
 
   @override
@@ -144,9 +149,9 @@ class _StampBoardWidgetState extends State<StampBoardWidget>
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                     child: Text(
-                      'Tab to View Booth Information',
+                      '지금까지 방문한 장소입니다!',
                       textAlign: TextAlign.start,
-                      style: FlutterFlowTheme.of(context).subtitle1?.override(
+                      style: FlutterFlowTheme.of(context).title2?.override(
                             fontFamily: 'Outfit',
                             color: FlutterFlowTheme.of(context).primaryText,
                           ),
@@ -159,13 +164,16 @@ class _StampBoardWidgetState extends State<StampBoardWidget>
                         padding: EdgeInsets.zero,
                         scrollDirection: Axis.vertical,
                         // Customize what your widget looks like when it's loading the first page.
-                        itemCount: completedStamps.length,
+                        itemCount: stampList.length,
                         itemBuilder: (context, listViewIndex) {
                           //final listViewToDoListRecord =
                           //_pagingController!.itemList![listViewIndex];
-                          Map<String, dynamic> visit =
+                         /* Map<String, dynamic> visit =
                               Map<String, dynamic>.from(
                                   completedStamps.elementAt(listViewIndex));
+
+                          */
+                          var stamp = stampList.elementAt(listViewIndex);
                           return Padding(
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
@@ -213,7 +221,7 @@ class _StampBoardWidgetState extends State<StampBoardWidget>
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              visit["name"]!,
+                                              stamp["booth_id"].toString()!,
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .title2,
@@ -225,7 +233,7 @@ class _StampBoardWidgetState extends State<StampBoardWidget>
                                                   padding: EdgeInsetsDirectional
                                                       .fromSTEB(0, 4, 0, 0),
                                                   child: Text(
-                                                    visit["end_time"],
+                                                    DateFormat("yyyy-MM-dd HH:MM:ss").format(DateTime.parse(stamp["start_time"])),
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .subtitle2,

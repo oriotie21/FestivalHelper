@@ -63,7 +63,7 @@ class _ShowQRWidgetState extends State<ShowQRWidget> {
                 ),
                 child : QrGeneratorForm()
               ),
-              Padding(
+              /*Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(130, 50, 130, 0),
                 child: FFButtonWidget(
                   text: 'Refresh',
@@ -80,7 +80,7 @@ class _ShowQRWidgetState extends State<ShowQRWidget> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-              ),
+              )*/
             ],
           ),
         ),

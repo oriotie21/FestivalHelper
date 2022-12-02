@@ -4,7 +4,9 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="enterancemanager">
+        android:label="FestivalHelper">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyD5v_IaoU7ahgeCML1TdQ-w7b7DM85AT7M"/>
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
@@ -30,8 +32,11 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+
         <!-- Required to fetch data from the internet. -->
 
     </application>
+
     <uses-permission android:name="android.permission.INTERNET" />
 </manifest>
+

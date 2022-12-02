@@ -1,8 +1,7 @@
 //import '../auth/auth_util.dart';
 import 'dart:convert';
 
-import 'package:enterancemanager/QrReaderPage.dart';
-import 'package:enterancemanager/ServerInfo.dart';
+import 'package:enterancemanager/httprequest.dart';
 import 'package:logger/logger.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:http/http.dart' as http;
@@ -19,8 +18,9 @@ import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'QrPage.dart';
+import 'ServerInfo.dart';
 import 'UserManager.dart';
+import 'home.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   void initState() {
     super.initState();
-    emailTextController = TextEditingController();
+    emailTextController = TextEditingController(); //유저 이름, 실제로는 이메일 아님
     passwordTextController = TextEditingController();
     passwordVisibility = false;
   }
@@ -55,14 +55,31 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   void processLogin() async{
+    //로그인 성공 여부 판단
+    http.Response loginResult = await http.post(Uri.parse(ServerInfo.addr+"/api/user/login"), headers: {"Content-Type" : "application/x-www-form-urlencoded"}, body: "username="+userID+"&password="+password);
+    if(loginResult.statusCode  != 200){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("로그인에 실패했습니다"))
+      );
+      return;
+    }
+    
     UserCredential user = UserCredential();
-    http.Response response = await http.get(Uri.parse(ServerInfo.addr+"/otp/key?name="+userID));
-    Logger().v("pressed");
-    Map<String, dynamic> jsonData = jsonDecode(response.body);
+    //예외처리 필요!
+    HttpRequest req = await HttpRequest();
+    //otp key 저장
+    http.Response resp = await req.sendGetRequest( "/api/otp/key", {"name":userID});
+    Map<String, dynamic> jsonData = jsonDecode(resp.body);
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('otpkey', jsonData["key"]);
-    user.setUsername(userID);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => QrReaderPage(),),);
+    if(resp.statusCode == 200) {
+      user.setOtpKey(jsonData["key"]);
+    }
+    Map<String, dynamic> clientData = Map<String, dynamic>();
+    user.setUsername(clientData["username"]);
+    user.setAccessToken(clientData["access_token"]);
+    user.setTokenType(clientData["token_type"]);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageWidget(),),);
+
   }
 
 
@@ -241,7 +258,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
                               child: FFButtonWidget(
-                                onPressed: ()=>{processLogin()},
+                                onPressed: processLogin,
 
                                 text: 'Login',
                                 options: FFButtonOptions(
@@ -298,11 +315,10 @@ class _LoginWidgetState extends State<LoginWidget> {
                                         height: 32,
                                         color: Color(0xFFC30E2E),
                                         textStyle: FlutterFlowTheme.of(context)
-                                            .subtitle2,
-                                            /*.override(
+                                            .subtitle2?.override(
                                               fontFamily: 'Outfit',
                                               color: Colors.white,
-                                            ),*/
+                                            ),
                                         elevation: 0,
                                         borderSide: BorderSide(
                                           color: Colors.transparent,

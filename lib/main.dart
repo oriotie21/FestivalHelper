@@ -1,11 +1,14 @@
-import 'package:enterancemanager/myqrcode.dart';
+import 'package:enterancemanager/LoginPage.dart';
+import 'package:enterancemanager/register.dart';
 import 'package:flutter/material.dart';
-
-import 'LoginPage.dart';
-import 'QrPage.dart';
-import 'QrReaderPage.dart';
+import 'package:logger/logger.dart';
+import 'flutter_flow/flutter_flow_theme.dart';
+import 'flutter_flow/flutter_flow_widgets.dart';
+import 'home.dart';
 import 'login.dart';
 import 'package:http/http.dart' as http;
+
+import 'mainmap.dart';
 
 void main() {
   runApp(const MyApp());
@@ -55,17 +58,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -77,65 +76,140 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 20),
-              child: SizedBox(
-                width: 70,
-                height: 60,
-                child: ElevatedButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                        EdgeInsets.symmetric(vertical: 20.0)),
-                    backgroundColor: MaterialStateProperty.all(Color(0xff447def)),
-                  ),
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => LoginWidget(),),),
-                  child: Text(
-                    '로그인',
-                    style: TextStyle(fontSize: 15.0, color: Colors.white),
-                  ),
+      key: scaffoldKey,
+      backgroundColor: FlutterFlowTheme.of(context).primaryBlack,
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * 1,
+        decoration: BoxDecoration(
+          color: FlutterFlowTheme.of(context).lineColor,
+          shape: BoxShape.rectangle,
+        ),
+        child: Padding(
+          padding: EdgeInsetsDirectional.fromSTEB(0, 40, 0, 0),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Align(
+                        alignment: AlignmentDirectional(0, 0),
+                        child: Image.asset(
+                          'assets/images/sejong_transparent.png',
+                          width: 234,
+                          height: 234,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            )
-          ],
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Sejong Festival Helper',
+                    textAlign: TextAlign.center,
+                    style: FlutterFlowTheme.of(context).title1,
+                  ),
+                ],
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Padding(
+                              padding:
+                              EdgeInsetsDirectional.fromSTEB(0, 2, 0, 20),
+                              child: FFButtonWidget(
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => RegisterWidget(),
+                                    ),
+                                  );
+                                },
+                                text: 'Register',
+                                options: FFButtonOptions(
+                                  width: 200,
+                                  height: 50,
+                                  color: Color(0xFFC30E2E),
+                                  textStyle: FlutterFlowTheme.of(context)
+                                      .subtitle2
+                                      ?.override(
+                                    fontFamily: 'Outfit',
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  elevation: 3,
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 1,
+                                  ),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                              )/*.animateOnPageLoad(
+                                  animationsMap['buttonOnPageLoadAnimation1']!)*/,
+                            ),
+                            FFButtonWidget(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => LoginWidget(),
+                                  ),
+                                );
+                              },
+                              text: 'Login',
+                              options: FFButtonOptions(
+                                width: 200,
+                                height: 50,
+                                color: FlutterFlowTheme.of(context).white,
+                                textStyle: FlutterFlowTheme.of(context)
+                                    .subtitle2
+                                    ?.override(
+                                  fontFamily: 'Outfit',
+                                  color: Color(0xFFC30E2E),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                elevation: 3,
+                                borderSide: BorderSide(
+                                  color: Colors.transparent,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            )/*.animateOnPageLoad(
+                                animationsMap['buttonOnPageLoadAnimation2']!)*/,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ShowQRWidget()),),
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

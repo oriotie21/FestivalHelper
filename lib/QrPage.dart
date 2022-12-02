@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:enterancemanager/UserManager.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -102,8 +103,9 @@ class _QrGeneratorForm extends State<QrGeneratorForm> {
   int REFRESH_RATE = 30;
   int KEY_TIME = 0;
   String OTPPass = "";
+  String QrData = "";
   int remainTime = 0;
-  String name = "";
+  String? username = "";
   late Timer timer;
   bool isRunning = false;
   int currentMillis = 0;
@@ -112,6 +114,7 @@ class _QrGeneratorForm extends State<QrGeneratorForm> {
   }
 
   void loadOTP() async {
+    username = await UserCredential().getUsername();
     //if (timer.isActive) {
     //  timer?.cancel();
    // }
@@ -142,8 +145,13 @@ class _QrGeneratorForm extends State<QrGeneratorForm> {
     //시간은 5초 단위
     KEY_TIME = currentMillis;
     final prefs = await SharedPreferences.getInstance();
+    OTPPass = OTP.generateTOTPCodeString(prefs.getString("otpkey").toString(), KEY_TIME,interval: REFRESH_RATE,  algorithm: Algorithm.SHA256, isGoogle: true );
+    //QR 데이터 생성
+    Map<String, dynamic> qrjsonData = Map<String, dynamic>();
+    qrjsonData['username'] = username;
+    qrjsonData['otppass'] = OTPPass;
     setState(() {
-       OTPPass = OTP.generateTOTPCodeString(prefs.getString("otpkey").toString(), KEY_TIME,interval: REFRESH_RATE,  algorithm: Algorithm.SHA256, isGoogle: true );
+      QrData = jsonEncode(qrjsonData);
     });
   }
 
@@ -162,7 +170,7 @@ class _QrGeneratorForm extends State<QrGeneratorForm> {
         padding: EdgeInsets.symmetric(vertical: 10),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           QrImage(
-            data: OTPPass,
+            data: QrData,
             size: 260,
           ),
           Padding(
@@ -235,13 +243,6 @@ class QrPage extends StatefulWidget {
 }
 
 class _QrPageState extends State<QrPage> {
-  String email = "";
-  String password = "";
-
-  bool _showSpinner = false;
-
-  String emailText = 'Email doesn\'t match';
-  String passwordText = 'Password doesn\'t match';
 
   @override
   Widget build(BuildContext context) {
@@ -249,7 +250,6 @@ class _QrPageState extends State<QrPage> {
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: ModalProgressHUD(
-        inAsyncCall: _showSpinner,
         color: Colors.blueAccent,
         child: Stack(
           children: [

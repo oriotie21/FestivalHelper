@@ -33,4 +33,29 @@ class UserCredential{
   void setUsername(String s){
     setStrAtPref("name", s);
   }
+
+  Future<String?> getOtpKey() async{
+    String? r = await getStrFromPref("otpkey");
+    return r;
+  }
+  void setOtpKey(String s) async{
+    setStrAtPref("otpkey", s);
+  }
+
+  Future<String?> getAccessToken() async{
+    String? r = await getStrFromPref("access_token");
+    return r;
+  }
+  void setAccessToken(String s) async{
+    setStrAtPref("access_token", s);
+  }
+
+  Future<String?> getTokenType() async{
+    String? r = await getStrFromPref("token_type");
+    return r;
+  }
+  void setTokenType(String s) async{
+    setStrAtPref("token_type", s);
+  }
+
 }

@@ -22,6 +22,12 @@ class FFButtonWidget extends StatelessWidget {
             style: ButtonStyle(
                 backgroundColor: MaterialStatePropertyAll(options?.color),
                 elevation: MaterialStatePropertyAll(options?.elevation),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                      borderRadius: options!.borderRadius,
+
+                  )
+              )
             ),
             onPressed: onPressed,
             child: Text(
@@ -38,7 +44,7 @@ class FFButtonOptions extends StatelessWidget {
   TextStyle? textStyle;
   BorderSide? borderSide;
   double? elevation;
-  late BorderRadius borderRadius;
+  BorderRadiusGeometry borderRadius;
 
   FFButtonOptions({
     this.width,

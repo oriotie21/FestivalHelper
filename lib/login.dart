@@ -1,8 +1,7 @@
 //import '../auth/auth_util.dart';
 import 'dart:convert';
 
-import 'package:enterancemanager/QrReaderPage.dart';
-import 'package:enterancemanager/ServerInfo.dart';
+import 'package:enterancemanager/httprequest.dart';
 import 'package:logger/logger.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:http/http.dart' as http;
@@ -19,8 +18,9 @@ import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'QrPage.dart';
+import 'ServerInfo.dart';
 import 'UserManager.dart';
+import 'home.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({Key? key}) : super(key: key);
@@ -42,7 +42,7 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   void initState() {
     super.initState();
-    emailTextController = TextEditingController();
+    emailTextController = TextEditingController(); //유저 이름, 실제로는 이메일 아님
     passwordTextController = TextEditingController();
     passwordVisibility = false;
   }
@@ -55,14 +55,31 @@ class _LoginWidgetState extends State<LoginWidget> {
   }
 
   void processLogin() async{
+    //로그인 성공 여부 판단
+    http.Response loginResult = await http.post(Uri.parse(ServerInfo.addr+"/api/user/login"), headers: {"Content-Type" : "application/x-www-form-urlencoded"}, body: "username="+userID+"&password="+password);
+    if(loginResult.statusCode  != 200){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("로그인에 실패했습니다"))
+      );
+      return;
+    }
+    
     UserCredential user = UserCredential();
-    http.Response response = await http.get(Uri.parse(ServerInfo.addr+"/otp/key?name="+userID));
-    Logger().v("pressed");
-    Map<String, dynamic> jsonData = jsonDecode(response.body);
+    //예외처리 필요!
+    HttpRequest req = await HttpRequest();
+    //otp key 저장
+    http.Response resp = await req.sendGetRequest( "/api/otp/key", {"name":userID});
+    Map<String, dynamic> jsonData = jsonDecode(resp.body);
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString('otpkey', jsonData["key"]);
-    user.setUsername(userID);
-    Navigator.push(context, MaterialPageRoute(builder: (context) => QrReaderPage(),),);
+    if(resp.statusCode == 200) {
+      user.setOtpKey(jsonData["key"]);
+    }
+    Map<String, dynamic> clientData = jsonData;
+    user.setUsername(clientData["username"]);
+    user.setAccessToken(clientData["access_token"]);
+    user.setTokenType(clientData["token_type"]);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => HomePageWidget(),),);
+
   }
 
 
@@ -114,7 +131,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                               obscureText: false,
                               onChanged: (value){userID = value;},
                               decoration: InputDecoration(
-                                hintText: 'Your email...',
+                                hintText: '아이디',
                                 hintStyle: FlutterFlowTheme.of(context).bodyText1,
 
                                 enabledBorder: OutlineInputBorder(
@@ -149,19 +166,12 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 fillColor:
                                     FlutterFlowTheme.of(context).tertiaryColor,
                                 prefixIcon: Icon(
-                                  Icons.email_outlined,
+                                  Icons.person,
                                   color: FlutterFlowTheme.of(context).lineColor,
                                 ),
                               ),
                               style: FlutterFlowTheme.of(context).bodyText1,
                               keyboardType: TextInputType.name,
-                              validator: (val) {
-                                if (val == null || val.isEmpty) {
-                                  return 'Please fill in a valid email address...';
-                                }
-
-                                return null;
-                              },
                             ),
                             Padding(
                               padding:
@@ -171,7 +181,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 obscureText: !passwordVisibility,
                                 onChanged: (value) {password = value;},
                                 decoration: InputDecoration(
-                                  hintText: 'Enter your password here...',
+                                  hintText: '비밀번호',
                                   hintStyle: FlutterFlowTheme.of(context)
                                       .bodyText1,
                                   enabledBorder: OutlineInputBorder(
@@ -229,9 +239,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                                 ),
                                 style: FlutterFlowTheme.of(context).bodyText1,
                                 validator: (val) {
-                                  if (val == null || val.isEmpty) {
-                                    return 'That password doesn\'t match.';
-                                  }
 
                                   return null;
                                 },
@@ -241,7 +248,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                               padding:
                                   EdgeInsetsDirectional.fromSTEB(0, 24, 0, 0),
                               child: FFButtonWidget(
-                                onPressed: ()=>{processLogin()},
+                                onPressed: processLogin,
 
                                 text: 'Login',
                                 options: FFButtonOptions(
@@ -256,102 +263,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 44, 0, 30),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 0, 6),
-                                    child: Text(
-                                      'Don’t have an account yet? ',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyText1,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 10, 0),
-                                    child: FFButtonWidget(
-                                      onPressed: () async {/*
-                                        await Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            type: PageTransitionType.fade,
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            reverseDuration:
-                                                Duration(milliseconds: 200),
-                                            child: RegisterWidget(),
-                                          ),
-                                        );
-                                      */},
-                                      text: 'Register',
-                                      options: FFButtonOptions(
-                                        width: 90,
-                                        height: 32,
-                                        color: Color(0xFFC30E2E),
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .subtitle2,
-                                            /*.override(
-                                              fontFamily: 'Outfit',
-                                              color: Colors.white,
-                                            ),*/
-                                        elevation: 0,
-                                        borderSide: BorderSide(
-                                          color: Colors.transparent,
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(0),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 0, 10, 0),
-                                    child: FFButtonWidget(
-                                      onPressed: () async {/*
-                                        await Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            type: PageTransitionType.fade,
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            reverseDuration:
-                                                Duration(milliseconds: 200),
-                                            child: ManageRegisterWidget(),
-                                          ),
-                                        );
-                                        */
-                                      },
-                                      text: 'Manager',
-                                      options: FFButtonOptions(
-                                        width: 90,
-                                        height: 32,
-                                        color: Color(0xFFC30E2E),
-                                        textStyle: FlutterFlowTheme.of(context)
-                                            .subtitle2
-                                            ,/*.override(
-                                              fontFamily: 'Outfit',
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                            ),*/
-                                        elevation: 0,
-                                        borderSide: BorderSide(
-                                          color: Colors.transparent,
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.circular(0),
-                                      ),
-                                    ),
-                                  ),
-                                ],
                               ),
                             ),
                           ],

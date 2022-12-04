@@ -68,7 +68,8 @@ class _LoginWidgetState extends State<LoginWidget> {
     //예외처리 필요!
     HttpRequest req = await HttpRequest();
     //otp key 저장
-    http.Response resp = await req.sendGetRequest( "/api/otp/key", {"name":userID});
+    http.Response resp = await req.sendGetRequest( "/api/otp/key", {"username":userID});
+    Logger().v(resp.body);
     Map<String, dynamic> jsonData = jsonDecode(resp.body);
     final prefs = await SharedPreferences.getInstance();
     if(resp.statusCode == 200) {

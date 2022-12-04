@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:enterancemanager/mainmap.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import '../flutter_flow/flutter_flow_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'ServerInfo.dart';
 import 'flutter_flow/my_markers.dart';
 
 class BoothMapWidget extends StatefulWidget {
@@ -21,46 +25,37 @@ class _BoothMapWidget extends State<BoothMapWidget> {
 
   //부스 관련 변수
   String selectedBoothName = "부스를 선택해 주세요";
+  String selectedBoothDescription = "";
+  String selectedBoothVisitors = "";
 
   late GoogleMapController mapController;
   Set<MyMarker> markersList = new Set();
 
-  List<Map<String, dynamic>> locations = [
-    {
-      "Location_Number": "1",
-      "Location_Name": "Daeyang AI Center",
-      "coordinates": [127.075698, 37.551114]
-    },
-    {
-      "Location_Number": "2",
-      "Location_Name": "Daeyang Hall",
-      "coordinates": [127.074525, 37.548589]
-    },
-    {
-      "Location_Number": "3",
-      "Location_Name": "GwangGaeToe",
-      "coordinates": [127.073275, 37.550224]
-    },
-    {
-      "Location_Number": "4",
-      "Location_Name": "PlayGround",
-      "coordinates": [127.075151, 37.550381]
-    },
-    {
-      "Location_Number": "5",
-      "Location_Name": "Library",
-      "coordinates": [127.074213, 37.551529]
-    },
-  ];
-  void _addMarkers() {
-    locations.forEach((Map<String, dynamic> location) {
-      final MyMarker marker = MyMarker(location['Location_Name'],
-          id: MarkerId(location['Location_Number']),
-          lat: location['coordinates'][1],
-          lng: location['coordinates'][0],
-          onTap : () => {setState((){selectedBoothName=location['Location_Name'];})} );
-      markersList.add(marker);
-    });
+
+  Future<void> _addMarkers() async {
+    //location에 위치 추가
+    String respbody = (await http.get(Uri.parse(ServerInfo.addr+"/api/booth/"), )).body;
+    List boothLocations = jsonDecode(respbody);
+    Logger().v(boothLocations.toString());
+    Logger().v(boothLocations.length);
+    for (int i=0; i<boothLocations.length; i++) {
+      Logger().v(boothLocations[i].toString());
+      final MyMarker marker = MyMarker(boothLocations[i]['name'],
+          id: MarkerId(boothLocations[i]['id'].toString()),
+          lat: double.parse(boothLocations[i]['mapy']),
+          lng: double.parse(boothLocations[i]['mapx']),
+          onTap : () => {setState(() async {selectedBoothName=boothLocations[i]['name'];
+          selectedBoothDescription=boothLocations[i]['description'];
+          selectedBoothVisitors = jsonDecode((await http.get(Uri.parse(ServerInfo.addr+"/api/visits/recent/"+boothLocations[i]['id'].toString()))).body)['recent_visit_user_num'].toString();
+          setState(() {
+          });
+          })}
+      );
+
+      setState(() {
+        markersList.add(marker);
+      });
+    }
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -190,7 +185,7 @@ class _BoothMapWidget extends State<BoothMapWidget> {
                                     Expanded(
                                       // Customize what your widget looks like when it's loading.
                                       child: Text(
-                                        '[Booth 1 line introduction]',
+                                        selectedBoothDescription,
                                         textAlign: TextAlign.center,
                                         style: FlutterFlowTheme.of(context)
                                             .subtitle1
@@ -236,7 +231,7 @@ class _BoothMapWidget extends State<BoothMapWidget> {
                                     Expanded(
                                         // Customize what your widget looks like when it's loading.
                                         child: Text(
-                                      '[Booth 1 line introduction]',
+                                      selectedBoothVisitors,
                                       textAlign: TextAlign.center,
                                       style: FlutterFlowTheme.of(context)
                                           .subtitle1
